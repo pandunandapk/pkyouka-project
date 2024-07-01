@@ -1,0 +1,55 @@
+---
+title: Deploy Aplikasi Website ke Webserver Apache
+author: Pandunanda Primadfani Kafah
+description: Cara deploy aplikasi website ke webserver apache dengan mudah dan cepat
+tags:
+    - Apache
+    - Webserver
+    - Deploy
+published: true
+publishDate: 2023-02-16T16:58:21.000Z
+slug: deploy-aplikasi-website-ke-webserver-apache
+
+---
+
+# Deploy Aplikasi Website ke Webserver Apache
+
+Cara ini menggunakan apache untuk deploy aplikasi website dengan mudah dan cepat dengan apache.
+pertama yang harus dilakukan adalah menginstall apache pada server yang akan digunakan.
+login pada server dan ketik perintah berikut:
+
+```bash
+sudo apt update
+sudo apt install apache2
+```
+
+setelah melakukan instalasi maka selanjutnya adalah mengaktifkan apache dengan perintah:
+
+```bash
+sudo systemctl enable apache2
+sudo systemctl start apache2
+```
+
+hal ini ditujukan untuk mengaktifkan apache dan menjalankannya.
+selanjutnya adalah mengatur konfigurasi apache agar aplikasi website dapat diakses.
+
+buat file konfigurasi apache pada folder `/etc/apache2/sites-available/` dengan nama file `web.conf` dan isi file tersebut dengan konfigurasi berikut:
+
+```apache 
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
+    ServerName example.com
+    ServerAlias www.example.com
+
+    <Directory /var/www/html>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+

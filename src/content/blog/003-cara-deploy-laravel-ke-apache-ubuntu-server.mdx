@@ -1,0 +1,92 @@
+---
+title: Cara Deploy Laravel ke Server Apache Ubuntu Server
+author: Pandunanda Primadifani Kafah
+description: Cara deploy laravel ke server apache dengan mudah dan cepat
+tags:
+  - Apache
+  - Laravel
+  - PHP
+  - Server
+  - Ubuntu
+published: true
+publishDate: 2023-02-03T20:21:00+07:00
+slug: cara-deploy-laravel-ke-apache-ubuntu-server
+---
+
+# Cara Deploy Laravel ke Server Apache
+
+Pertama untuk ini kalian harus melakukan instalasi Apache Server terlebih dahulu. 
+Cara untuk menginstall Apache Server bisa kalian lihat di 
+
+[Digital Ocean Install Apache](https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-20-04).
+
+sampai muncul gambar seperti dibawah ini:
+
+![Gambar Apache Server](https://assets.digitalocean.com/articles/how-to-install-lamp-ubuntu-16/small_apache_default.png)
+
+selanjutnya kalian harus menginstall PHP dan Composer. Cara untuk menginstall PHP dan Composer dengan perintah berikut:
+  
+  ```bash
+  sudo apt update
+  sudo apt install php libapache2-mod-php php-mysql php-xml php-mbstring php-json php-curl php-zip
+  sudo apt install composer
+  ```
+
+Setelah itu, kalian harus menginstall MySQL. Cara untuk menginstall MySQL dengan perintah berikut:
+
+  ```bash
+  sudo apt install mysql-server
+  ```
+pastikan kalian mengatur password untuk MySQL agar pada saat deploy laravel kalian tidak mengalami kendala.
+
+Setelah itu, kalian harus menginstall Laravel. Cara untuk menginstall Laravel dengan perintah berikut:
+
+  ```bash
+  composer global require laravel/installer
+  ```
+
+setelah memasukan perintah di composer untuk instalasi laravel sudah selesai, maka kalian bisa membuat project laravel dengan perintah berikut:
+
+  ```bash
+  laravel new nama_project
+  ```
+
+  Nama project ini ganti dengan nama project yang kalian inginkan.
+  setelah melakukan instalasi maka atur file .env untuk mengatur database yang akan digunakan.
+  maka selanjutnya adalah melakukan konfigurasi Apache Server. Cara untuk melakukan konfigurasi Apache Server dengan perintah berikut:
+
+  ```bash
+  sudo nano /etc/apache2/sites-available/000-default.conf
+  ```
+
+  setelah itu tambahkan kode berikut:
+
+  ```bash
+  <VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html/nama_project/public
+    <Directory /var/www/html/nama_project>
+        AllowOverride All
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+  </VirtualHost>
+  ```
+
+  Lakukan modifikasi modul Apache dengan fungsi chmod dan chown dengan perintah berikut:
+
+  ```bash
+  sudo chmod -R 755 /var/www/html/nama_project
+  sudo chown -R www-data:www-data /var/www/html/nama_project
+  ```
+  Aktifkan sites yang sebelumnya kalian edit dengan perintah berikut:
+
+  ```bash
+  sudo a2ensite 000-default.conf
+  ```
+  Restart Apache Server dengan perintah berikut:
+
+  ```bash
+  sudo systemctl restart apache2
+  ```
+  maka project laravel kalian sudah bisa diakses melalui browser dengan alamat IP server kalian.

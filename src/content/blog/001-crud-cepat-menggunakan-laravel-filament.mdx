@@ -1,0 +1,86 @@
+---
+title: Cara Instalasi CRUD Cepat menggunakan Laravel Filament
+author: Pandunanda Primadfani Kafah
+description: Cara cepat untuk membuat CRUD menggunakan Laravel Filament dengan mudah dan cepat
+tags:
+  - Laravel
+  - Filament
+  - CRUD
+published: true
+publishDate: 2023-02-16T16:58:21.000Z
+slug: crud-cepat-menggunakan-laravel-filament
+---
+
+# CRUD Cepat menggunakan Laravel Filament
+
+Cara ini menggunakan laravel filament untuk membuat CRUD dengan mudah dan cepat dengan laravel filament.
+
+## Instalasi Laravel Filament
+
+```bash
+composer require filament/filament
+php artisan filament:install
+```
+
+setelah melakukan instalasi maka akan muncul tampilan seperti ini:
+
+![Filament](https://filamentphp.com/build/assets/filament-demo-c558930e.webp)
+
+selanjutnya adalah membuat CRUD dengan menggunakan laravel filament.
+ketik pada terminal:
+
+```bash
+php artisan make:filament:resource Post
+```
+
+hal ini akan membuat file `Post.php` pada folder `app/Filament/Resources/Post.php`
+dengan isi file sebagai berikut:
+
+```php
+<?php
+
+namespace App\Filament\Resources;
+
+use Filament\Resources\Resource;
+
+class Post extends Resource
+{
+    public static $icon = 'heroicon-o-document-text';
+}
+```
+jika ingin menambahkan field pada crud tersebut, maka tambahkan kode berikut pada file `Post.php`:
+
+```php
+<?php
+
+namespace App\Filament\Resources;
+
+use Filament\Resources\Resource;
+use Filament\Forms\Components;
+
+class Post extends Resource
+{
+    public static $icon = 'heroicon-o-document-text';
+
+    public static function form($form)
+    {
+        return [
+            Components\TextInput::make('title'),
+            Components\Textarea::make('content'),
+        ];
+    }
+}
+```
+
+setelah itu, tambahkan route untuk mengakses crud
+  
+  ```php
+  use Filament\Http\Controllers\FilamentResourceController;
+  use App\Filament\Resources\Post;
+  
+  Route::filament('/filament', FilamentResourceController::class)->name('filament');
+  ```
+  
+  setelah itu, akses crud tersebut dengan url `http://localhost:8000/filament/resources/post`
+  
+  selamat mencoba!

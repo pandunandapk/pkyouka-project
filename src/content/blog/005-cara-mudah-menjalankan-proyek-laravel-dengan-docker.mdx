@@ -1,0 +1,94 @@
+---
+title: Cara Mudah Menjalankan Proyek Laravel dengan Docker
+author: Pandunanda Primadifani Kafah
+description: Pelajari cara praktis memaketkan dan menjalankan proyek Laravel kamu dalam kontainer Docker untuk pengembangan dan deployment yang lebih efisien.
+tags:
+  - Docker
+  - Deployment
+  - Web Development
+  - Laravel
+published: true
+publishDate: 2023-02-16T16:58:21.000Z
+slug: cara-mudah-menjalankan-proyek-laravel-dengan-docker
+---
+
+Docker adalah platform yang populer untuk pengembangan dan deployment aplikasi secara efisien. Dengan Docker, kamu bisa membuat lingkungan yang konsisten dan terisolasi untuk proyek Laravel kamu, sehingga memudahkan pengembangan dan deployment di berbagai platform.
+
+## Kenapa Pakai Docker?
+
+* **Lingkungan yang Konsisten:** Docker memastikan lingkungan pengembangan dan produksi tetap sama, menghindari masalah "berjalan di komputer saya saja".
+* **Portabilitas:** Kontainer Docker bisa dipindahkan dengan mudah ke berbagai platform dan penyedia cloud.
+* **Skalabilitas:** Docker memudahkan untuk meningkatkan atau menurunkan skala aplikasi kamu sesuai kebutuhan.
+
+## Apa Saja yang Dibutuhkan?
+
+Pastikan kamu sudah menginstal Docker dan Docker Compose di komputer kamu. Kalau belum, kamu bisa mengunduhnya dari situs resmi Docker.
+
+## Langkah 1: Membuat Dockerfile
+
+Buat file bernama `Dockerfile` di direktori utama proyek Laravel kamu. File ini berisi instruksi untuk membangun image Docker.
+
+```bash
+FROM php:8.0-fpm
+
+WORKDIR /var/www/html
+
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    unzip
+
+RUN docker-php-ext-install pdo pdo_mysql zip
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+COPY . .
+
+RUN composer install --no-dev
+
+RUN chown -R www-data:www-data /var/www/html/storage
+
+CMD php artisan serve --host=0.0.0.0 --port=8000
+```
+
+## Langkah 2: Membuat docker-compose.yml
+
+Buat file bernama `docker-compose.yml` di direktori yang sama. File ini mendefinisikan layanan yang akan kamu gunakan dalam kontainer.
+
+```yaml
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=laravel
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=laravel
+```
+
+## Langkah 3: Membangun dan Menjalankan Kontainer
+
+Buka terminal di direktori proyek kamu dan jalankan perintah berikut:
+
+```bash
+docker-compose up -d
+```
+
+Perintah ini akan membangun image Docker dan menjalankan kontainer. Kamu bisa mengakses aplikasi Laravel kamu di `http://localhost:8000`.
+
+## Tips Tambahan
+
+* **Ganti Port:** leboh baik menggunakan port 80 untuk langsung ke aplikasi tanpa masuk ke port 8000 `docker-compose.yml`.
+* **Environment Variables:** Jangan lupa untuk menyimpan data rahasia seperti password dan bisa menggunakan environment variables.
